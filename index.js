@@ -1,16 +1,17 @@
-const Joi=require('joi')
 const mongoose=require('mongoose')
 const express=require('express')
 const genres=require('./routes/genres')
+const customers=require('./routes/customers')
 const app=express()
 app.use(express.json())
-app.use('/api/generes',genres)
+app.use('/api/genres',genres)
+app.use('/api/customers',customers)
 
 //connecting to mongodb
 //connecting to the db
 mongoose.connect('mongodb://localhost/vidly')
-.then(()=>console.log('db connected...'))
-.catch(e=>console.log(e.message))
+.then(()=>console.log('connected to mongodb...'))
+.catch(e=>console.error("couldn't connect to mongodb..."))
 
 //listing to a port
 const port=process.env.PORT || 5000

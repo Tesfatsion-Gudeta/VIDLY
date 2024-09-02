@@ -1,35 +1,35 @@
+const Joi=require('joi')
 const express=require('express')
 const mongoose=require('mongoose')
 const router=express.Router()
 
-
-
 //schema for the genres database
 const genreSchema=new mongoose.Schema({
-    name:String
+    name:{
+        type:String,
+        required:true
+    }
     })
 
 //model 
 const Genre=mongoose.model('Genre',genreSchema)
 
 
-
 //for get request of the list of genres
 
 router.get('/',async (req,res)=>{
-    res.send(await Genre.find())
+    res.send(await Genre.find().sort('name'))
 })
 
 //for post request/adding a genre
-router.post('/',async(req,res)=>{
+router.post('/', async (req,res)=>{
     const {error}=validateGenre(req.body)
     if(error) return res.status(400).send(error.details[0].message)
     
     //creating and saving a new genre
-    let genre=new Genre({name:req.body})
+    let genre=new Genre({name:req.body.name})
     genre=await genre.save()
     res.send(genre)
-
 
 })
 
@@ -40,7 +40,8 @@ router.put('/:id',async(req,res)=>{
     const {error}=validateGenre(req.body)
     if(error) return res.status(400).send(error.details[0].message)
     
-    const genre= await Genre.findByIdAndUpdate(req.params.id,{name:req.body},{new:true})
+        //updating on the database
+    const genre= await Genre.findByIdAndUpdate(req.params.id,{name:req.body.name},{new:true})
     if(!genre) return res.status(404).send('genre with that specific id is not found')
     res.send(genre)
 })
@@ -48,13 +49,19 @@ router.put('/:id',async(req,res)=>{
 //for delete request of the genres
 
 router.delete('/:id',async (req,res)=>{
-    const genre= genres.find(g=>g.id===parseInt(req.params.id))
-    if(!genre) return res.status(404).send('genre with that specific id is not found')
-    
-    const index=genres.indexOf(genre)
-    genres.splice(index,1)
 
-    const d=await Genre.deleteOne({id:id})
+    //deleting genre with the specific id 
+    const genre= await Genre.findByIdAndDelete(req.params.id)
+    if(!genre) return res.status(404).send('genre with that specific id is not found')
+    res.send(genre)
+
+})
+
+//for getting a single genre
+
+router.get('/:id',async(req,res)=>{
+    const genre= await Genre.findById(req.params.id)
+    if(!genre)return res.status(404).send("couldn't find genre with that specific id")
     res.send(genre)
 
 })
