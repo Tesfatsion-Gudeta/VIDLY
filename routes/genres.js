@@ -1,18 +1,6 @@
-const Joi=require('joi')
 const express=require('express')
-const mongoose=require('mongoose')
 const router=express.Router()
-
-//schema for the genres database
-const genreSchema=new mongoose.Schema({
-    name:{
-        type:String,
-        required:true
-    }
-    })
-
-//model 
-const Genre=mongoose.model('Genre',genreSchema)
+const {Genre,validate}=require('../models/genre')
 
 
 //for get request of the list of genres
@@ -23,7 +11,7 @@ router.get('/',async (req,res)=>{
 
 //for post request/adding a genre
 router.post('/', async (req,res)=>{
-    const {error}=validateGenre(req.body)
+    const {error}=validate(req.body)
     if(error) return res.status(400).send(error.details[0].message)
     
     //creating and saving a new genre
@@ -37,7 +25,7 @@ router.post('/', async (req,res)=>{
 
 router.put('/:id',async(req,res)=>{
 
-    const {error}=validateGenre(req.body)
+    const {error}=validate(req.body)
     if(error) return res.status(400).send(error.details[0].message)
     
         //updating on the database
@@ -66,14 +54,6 @@ router.get('/:id',async(req,res)=>{
 
 })
 
-//input validation
 
-function validateGenre(genre){
-
-    const schema=Joi.object({name:Joi.string().min(3).required()})
-
-    return schema.validate(genre)
-
-}
 
 module.exports=router
