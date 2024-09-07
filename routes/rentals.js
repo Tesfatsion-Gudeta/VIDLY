@@ -4,8 +4,8 @@ const router=express.Router()
 const {Rental,validate}=require('../models/rental')
 const { Customer } = require('../models/customer')
 const {Movie}=require('../models/movie')
-const Fawn=require('fawn')
-Fawn.init(mongoose)
+// const Fawn=require('fawn')
+// Fawn.init(mongoose)
 
 
 
@@ -50,6 +50,11 @@ try{
 }
 catch(ex){res.status(500).send('something failed')
 }
+
+movie.numberInStock--
+movie.save()
+res.send(await rental.save())
+
 })
 
 router.get('/:id',async(req,res)=>{
