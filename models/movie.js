@@ -40,8 +40,8 @@ const Movie=mongoose.model('Movie',movieSchema)
 
 function validateMovie(movie){
     const schema=Joi.object({
-        title:Joi.stringtring().required().min(3),
-        genreId:Joi.string().required(),
+        title:Joi.string().required().min(3),
+        genreId:Joi.objectId().required(),
         numberInStock:Joi.number().min(0).required(),
         dailyRentalRate:Joi.number().min(0).required()
     })
@@ -50,4 +50,4 @@ function validateMovie(movie){
 }
 
 exports.Movie=Movie
-exports.validat=validateMovie
+exports.validate=validateMovie
