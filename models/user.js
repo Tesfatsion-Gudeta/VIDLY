@@ -1,7 +1,9 @@
 const mongoose=require('mongoose')
 const Joi=require('joi')
+const jwt=require('jsonwebtoken')
+const config=require('config')
 
-const User=mongoose.model('User',new mongoose.Schema({
+const userSchema=new mongoose.Schema({
     name:{
         type:String,
         minLength:3,
@@ -20,8 +22,18 @@ const User=mongoose.model('User',new mongoose.Schema({
         required:true,
         minLength:6,
         maxLength:1024
-    }
-}))
+    },
+    isAdmin:Boolean
+})
+
+userSchema.methods.generateAuthToken=function(){
+    const token= jwt.sign({_id:this._id},config.get('jwtPrivateKey'))
+    return token
+}
+
+const User=mongoose.model('User',userSchema)
+
+
 
 //input validation
 
@@ -36,6 +48,5 @@ const schema=Joi.object({
 }
 
 //export
-
 exports.User=User
 exports.validate=validateUser

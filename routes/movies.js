@@ -2,6 +2,8 @@ const express=require('express')
 const {Movie,validate}=require('../models/movie')
 const { Genre } = require('../models/genre')
 const router=express.Router()
+const auth=require('../middleware/auth')
+const admin=require('../middleware/admin')
 
 
 //routes
@@ -10,7 +12,7 @@ router.get('/',async(req,res)=>{
     res.send(await Movie.find().sort('title'))
 })
 
-router.post('/',async(req,res)=>{
+router.post('/',auth,async(req,res)=>{
    const {error}= validate(req.body)
    if(error) return res.status(400).send(error.details[0].message)
    
@@ -27,7 +29,7 @@ router.post('/',async(req,res)=>{
     res.send(await movie.save())
 })
 
-router.put('/:id',async(req,res)=>{
+router.put('/:id',auth,async(req,res)=>{
     let movie= await Movie.findById(req.params.id)
     if(!movie) return res.status(404).send('could not find movie what that id')
     const{error}=validate(req.body)
@@ -48,7 +50,7 @@ router.put('/:id',async(req,res)=>{
     res.send(movie)
 })
 
-router.delete('/:id',async(req,res)=>{
+router.delete('/:id',[auth,admin],async(req,res)=>{
     const movie= await Movie.findByIdAndDelete(req.params.id)
     if(!movie) return res.status(404).send('movie with that specific id is not found')
     res.send(movie)

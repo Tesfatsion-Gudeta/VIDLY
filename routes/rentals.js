@@ -4,6 +4,7 @@ const router=express.Router()
 const {Rental,validate}=require('../models/rental')
 const { Customer } = require('../models/customer')
 const {Movie}=require('../models/movie')
+const auth=require('../middleware/auth')
 // const Fawn=require('fawn')
 // Fawn.init(mongoose)
 
@@ -14,7 +15,7 @@ router.get('/',async(req,res)=>{
     res.send(await Rental.find().sort('-dateOut'))
 })
 
-router.post('/',async(req,res)=>{
+router.post('/',auth,async(req,res)=>{
    const {error}= validate(req.body)
    if(error) return res.status(400).send(error.details[0].message)
    
@@ -39,17 +40,17 @@ router.post('/',async(req,res)=>{
 
         }
     })
-try{
-    new Fawn.Task()
-        .save('rentals',rental)
-        .update('movies',{_id:movie._id},{
-            $inc:{numberInStock:-1}
-        })
-        .run()
-    res.send(rental)
-}
-catch(ex){res.status(500).send('something failed')
-}
+// try{
+//     new Fawn.Task()
+//         .save('rentals',rental)
+//         .update('movies',{_id:movie._id},{
+//             $inc:{numberInStock:-1}
+//         })
+//         .run()
+//     res.send(rental)
+// }
+// catch(ex){res.status(500).send('something failed')
+// }
 
 movie.numberInStock--
 movie.save()

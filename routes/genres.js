@@ -1,6 +1,8 @@
 const express=require('express')
 const router=express.Router()
 const {Genre,validate}=require('../models/genre')
+const auth=require('../middleware/auth')
+const admin=require('../middleware/admin')
 
 
 //for get request of the list of genres
@@ -10,7 +12,7 @@ router.get('/',async (req,res)=>{
 })
 
 //for post request/adding a genre
-router.post('/', async (req,res)=>{
+router.post('/',auth,async (req,res)=>{
     const {error}=validate(req.body)
     if(error) return res.status(400).send(error.details[0].message)
     
@@ -23,7 +25,7 @@ router.post('/', async (req,res)=>{
 
 //for put request/for updating the genres
 
-router.put('/:id',async(req,res)=>{
+router.put('/:id',auth,async(req,res)=>{
 
     const {error}=validate(req.body)
     if(error) return res.status(400).send(error.details[0].message)
@@ -36,7 +38,7 @@ router.put('/:id',async(req,res)=>{
 
 //for delete request of the genres
 
-router.delete('/:id',async (req,res)=>{
+router.delete('/:id',[auth,admin],async (req,res)=>{
 
     //deleting genre with the specific id 
     const genre= await Genre.findByIdAndDelete(req.params.id)
