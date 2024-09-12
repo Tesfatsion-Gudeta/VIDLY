@@ -1,3 +1,6 @@
+require('express-async-errors')
+const winston=require('winston')
+const error=require('./middleware/error')
 const express=require('express')
 const mongoose=require('mongoose')
 const Joi=require('joi')
@@ -11,6 +14,8 @@ const users=require('./routes/users')
 const auth=require('./routes/auth')
 const app=express()
 
+ winston.add(winston.transports.File,{filename:'logfile.log'})
+
 if(!config.get('jwtPrivateKey')){
     console.error('FATAL ERROR: jwtPrivateKey not defined')
     process.exit(1)
@@ -23,6 +28,10 @@ app.use('/api/movies',movies)
 app.use('/api/rentals',rentals)
 app.use('/api/users',users)
 app.use('/api/auth',auth)
+
+//for errors
+app.use(error)
+
 
 
 //connecting to mongodb
