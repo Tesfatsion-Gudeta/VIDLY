@@ -14,7 +14,8 @@ const users=require('./routes/users')
 const auth=require('./routes/auth')
 const app=express()
 
- winston.add(winston.transports.File,{filename:'logfile.log'})
+
+winston.add(new winston.transports.File({ filename: 'logfile.log' }));
 
 if(!config.get('jwtPrivateKey')){
     console.error('FATAL ERROR: jwtPrivateKey not defined')
@@ -28,6 +29,7 @@ app.use('/api/movies',movies)
 app.use('/api/rentals',rentals)
 app.use('/api/users',users)
 app.use('/api/auth',auth)
+require('./prod')(app)
 
 //for errors
 app.use(error)
