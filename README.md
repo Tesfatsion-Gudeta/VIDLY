@@ -61,7 +61,6 @@ Add the following variables:
 4.Start the server:
 
 ```bash
-Copy code
 npm start
 
 ```
